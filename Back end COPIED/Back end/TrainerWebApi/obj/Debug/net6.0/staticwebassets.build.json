@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "NlURwPrCP4sYmcBjmK/uiIxDaZUxdLF5gMDGTOrKiLc=",
+  "Source": "TrainerWebApi",
+  "BasePath": "_content/TrainerWebApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
