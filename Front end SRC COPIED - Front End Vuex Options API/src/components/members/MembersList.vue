@@ -1,5 +1,5 @@
 <template>
-    <h2>Members List, gesorteerd op {{ sortedOnDescription }}</h2>
+    <h2>Ledenlijst, gesorteerd op {{ sortedOnDescription }}</h2>
 
     <div v-if="!dataIsLoaded || recoverBackEndIsBusy">
         <busy-loading
@@ -45,6 +45,7 @@
                         :start-date="mbr.startDate"
                         :end-date="mbr.endDate"
                         :is-also-trainer="mbr.isAlsoTrainer"
+                        :sorted-on="sortedOn"
                         :first-name="mbr.person.firstName"
                         :middle-name="mbr.person.middleName"
                         :last-name="mbr.person.lastName"
@@ -69,7 +70,7 @@ export default {
     
     watch: {
         // functienaam vd watcher = functienaam van de computed property
-        isLoaded(newValue, oldValue) {
+        isLoaded(newValue, _) { // oldValue vervangen door _
             if (newValue === true) {
                 this.dataIsLoaded = true;
             };
@@ -108,7 +109,7 @@ export default {
         },
         sortListOnId() {
             this.members.sort((a, b) => a.id - b.id);
-            this.sortedOn='lastName';
+            this.sortedOn='id';
         }
     },
     created() {

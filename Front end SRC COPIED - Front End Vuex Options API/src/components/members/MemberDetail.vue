@@ -4,17 +4,19 @@
     <div v-if="deleteAlertIsVisible">
         <delete-alert 
             :title=deleteWarningTitle 
-            @cancelDialog="hideDeleteAlert"
+            @cancelDialog="hidedeleteAlert"
             @deleteItem="deleteMember"
         ></delete-alert>
     </div>
 
     <div>
-        <div v-if="(id !=0 && !dataIsLoaded) || (updateBackEndBusy)">
-        <busy-loading
-            :description="description"
-        ></busy-loading>
+       
+    <div v-if="id !=0 && !dataIsLoaded">
+            <busy-loading
+                :description="description"
+            ></busy-loading>
     </div>
+    
 
     <div v-if="(dataIsLoaded || id == 0)">
         <h4 v-if="id != 0">Id: {{id}}</h4>
@@ -26,7 +28,7 @@
                 <p ><strong>Volledige naam: </strong>{{  fullName }}</p>
                 <p><strong>Niveau: </strong>{{  level.val }}</p>  
                 <p><strong>Niveau omschrijving: </strong>{{  levelString.val }}</p>
-                <p><strong>Is ook trainer: </strong>{{  convertBooleanToString(isAlsoTrainer.val) }}</p> <!-- via global Mixin -->
+                <p><strong>Is ook trainer: </strong>{{ convertBooleanToString(isAlsoTrainer.val) }}</p> <!-- via global Mixin -->
             </div>
 
             <fieldset :class="updateBackEndBusy ? 'protected' : null">
@@ -38,14 +40,14 @@
                         <td>
                             <div class="form-control" :class="{invalid: !firstName.isValid}">
                                 <label for="firstName">Voornaam</label>
-                                <input type="text" id="firstName" v-model.trim="firstName.val" @blur="clearValidity('firstName')"/>
+                                <input tabindex = 1 type="text" id="firstName" v-model.trim="firstName.val" @blur="clearValidity('firstName')"/>
                                 <p class="errorMessage" v-if="!firstName.isValid">{{ errorString }}</p>
                             </div>
                         </td>
                         <td>
                             <div class="form-control" :class="{invalid: !startDate.isValid}">
                                 <label for="startDate">Startdatum</label>
-                                <input type="text" id="startDate" v-model.trim="startDate.val" @blur="clearValidity('startDate')"/>
+                                <input tabindex = 4 type="text" id="startDate" v-model.trim="startDate.val" @blur="clearValidity('startDate')"/>
                                 <p class="errorMessage" v-if="!startDate.isValid">{{ errorString }}</p>
                             </div>
                         </td>
@@ -54,13 +56,13 @@
                         <td>
                             <div class="form-control" :class="{invalid: !middleName.isValid}">
                                 <label for="middleName">Tussenvoegsels</label>
-                                <input type="text" id="middleName" v-model.trim="middleName.val"/>
+                                <input tabindex = 2 type="text" id="middleName" v-model.trim="middleName.val"/>
                             </div>
                         </td>
                         <td>
                             <div class="form-control" :class="{invalid: !endDate.isValid}">
                                 <label for="endDate">Einddatum (mag leeg zijn)</label>
-                                <input type="text" id="endDate" v-model.trim="endDate.val" @blur="clearValidity('endDate')"/>
+                                <input tabindex = 5 type="text" id="endDate" v-model.trim="endDate.val" @blur="clearValidity('endDate')"/>
                                 <p class="errorMessage" v-if="!endDate.isValid">{{ errorString }}</p>
                             </div>
                         </td>
@@ -69,14 +71,12 @@
                         <td>
                             <div class="form-control" :class="{invalid: !lastName.isValid}">
                                 <label for="lastName">Achternaam</label>
-                                <input type="text" id="lastName" v-model.trim="lastName.val" @blur="clearValidity('lastName')"/>
+                                <input tabindex = 3 type="text" id="lastName" v-model.trim="lastName.val" @blur="clearValidity('lastName')"/>
                                 <p class="errorMessage" v-if="!lastName.isValid">{{ errorString }}</p>
                             </div>
                         </td>
                     </tr>
                 </table>
-
-                <p class="errorMessage" v-if="!startEndDateOk">{{ errorString }}</p>
 
             <hr>
 
@@ -102,8 +102,15 @@
 
             </fieldset>
             <base-button @click="submitForm">Verstuur</base-button>
-            <base-button v-if="this.id != 0" @click="showDeleteAlert">Verwijderen</base-button>    
-
+            <base-button v-if="this.id != 0" @click="showdeleteAlert">Verwijderen</base-button>    
+            <div>
+                <h4 v-if="showGeneralError" class="errorMessage">{{ generalErrorText }}</h4>
+            </div>
+            <div v-if="updateBackEndBusy">
+                <busy-loading
+                    :description="description"
+                ></busy-loading>
+            </div>
         </form>
     </div>
     </div>
@@ -113,14 +120,14 @@
 <script>
 import formatterMixins from '../../generalMixins/formatters/formatters.js';
 import validatorMixins from '../../generalMixins/validators/validators.js';
-import membersDetailMixins from './mixins/membersDetailMixins.js';
-import DeleteAlert from '../ui/DeleteAlert.vue';
+import memberDetailMixins from './mixins/memberDetailMixins.js';
+import deleteAlert from '../ui/DeleteAlert.vue';
 export default {
     components: { // sub componenten kan je NIET in een mixin.js file zetten.
-        DeleteAlert
+        deleteAlert
     },
-    mixins: [membersDetailMixins, formatterMixins, validatorMixins],
-    // props(), data(), computed() en created() zitten in de mixin
+    mixins: [memberDetailMixins, formatterMixins, validatorMixins],
+    // props(), data(), computed() zitten in de mixin
     // Je kan niet klakkeloos willekeurige items in mixins zetten, ze hebben toch een bepaalde afhankelijkheid van elkaar
     watch: {
         // functienaam vd watcher = functienaam van de computed property = isLoaded
@@ -149,15 +156,19 @@ export default {
         isUpdatedInBackEnd(newValue, oldValue) {
             if (newValue === true) {
                this.updateBackEndBusy = false;
-               this.$router.push({ path: '/members' })
+               if (!this.errorFromBackEnd) {
+                   this.$router.push({ path: '/members' })
+               } else {
+                    this.showGeneralError = true;
+               }
             };
         }
     },
     methods: {
-        showDeleteAlert() {
+        showdeleteAlert() {
             this.deleteAlertIsVisible = true;
         },
-        hideDeleteAlert() {
+        hidedeleteAlert() {
             this.deleteAlertIsVisible = false;
         },
         deleteMember() {
@@ -199,19 +210,19 @@ export default {
                 }
             };
 
-            const fullNameAddedMember = this.firstName.val + ' ' + this.middleName.val + ' ' + this.lastName.val;
+            const fullName = this.firstName.val + ' ' + this.middleName.val + ' ' + this.lastName.val;
             if (this.id != 0) {
-                this.description = `Lid \'${fullNameAddedMember}\' aan het Wijzigen in back-end...`;
+                this.description = `Lid \'${fullName}\' aan het Wijzigen in back-end...`;
                 this.$store.dispatch(`members/update`, formData); // members = namespace zie ook root index.js -- update = local action
 
             } else {
-                this.description = `Lid \'${fullNameAddedMember}\' aan het toevoegen in back-end...`;
+                this.description = `Lid \'${fullName}\' aan het toevoegen in back-end...`;
                 this.$store.dispatch(`members/add`, formData); // members = namespace zie ook root index.js -- add = local action
             }
         },
         validateForm() {
             this.formIsValid = true;
-            this.startEndDateOk = true;
+            this.showGeneralError = false;
 
             this.errorString = '';
             if (this.firstName.val === '') {
@@ -250,15 +261,24 @@ export default {
 
             // Controleer of einddatum > begindatum
             if (!this.check2DatesValid(this.startDate.val, this.endDate.val)) {
-                this.startEndDateOk = false;
-                this.errorString = getErrorString('E05', this.errorCodes);
+                this.showGeneralError = true;
+                this.$store.dispatch('members/setGeneralErrorText', 'Begindatum is groter dan einddatum');
                 this.formIsValid = false;
                 return;
             }
         },
        
     },
-    // created() lifecycle hook: via mixin
+    // created() lifecycle hook: zou ook via mixin kunnen
+    created() {
+        if (this.id != 0) {
+            this.get(this.id);
+        } else {
+            this.level.val = 1;
+        }
+        this.$store.dispatch('setCurrentList', 'all');
+        this.$store.dispatch('members/setGeneralErrorText', '');
+    } 
 }
 
 function getErrorString(errorCode, errorCodes)  {

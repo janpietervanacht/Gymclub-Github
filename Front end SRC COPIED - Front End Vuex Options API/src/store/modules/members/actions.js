@@ -1,20 +1,25 @@
 import memberLevelEnum from '../../../enums/memberLevel.js';
+import urls from '../../../constants/urls.js'
 
 /* Alle files die eindigen op .js moeten minimaal een export default {} kennen 
 
 /* Coach related state, mutations, actions, getters */
 export default {
 
+    setGeneralErrorText(context, payload) {
+        context.commit('setGeneralErrorText', payload); // zie local 'mutations': zet members in local state
+    },
+
     //------------------------------------------------------- 
 
     async getList(context, payload) { // een action wordt altijd 'dispatched' (hier is dat in MembersList.Vue)
        
-        context.commit('isLoaded', false); 
+        context.commit('setIsLoaded', false); 
         // Haal de URL op uit het SWAGGER scherm 'Curl'
         // Case is onbelangrijk voor de route
-        const response = await fetch(`https://localhost:7179/Member/GETList`); 
+        const response = await fetch(`${urls.memberUrl}/GETList`);  // member = controller naam - krijgt Curl nummer = 7219
         const responseData = await response.json();
-        context.commit('isLoaded', true); 
+        context.commit('setIsLoaded', true); 
 
         if (!response.ok) {
            const error = new Error(responseData.message || 'Failed to fetch!');
@@ -53,11 +58,11 @@ export default {
 
     async get(context, payload) { // een action wordt altijd 'dispatched' (hier is dat in MembersList.Vue)
 
-        context.commit('isLoaded', false); 
+        context.commit('setIsLoaded', false); 
         // Case is onbelangrijk voor de route
-        const response = await fetch('https://localhost:7179/meMBer/' + payload.id); // Haal de URL op uit het SWAGGER scherm 'Curl'
+        const response = await fetch(urls.memberUrl + '/' + payload.id); // Haal de URL op uit het SWAGGER scherm 'Curl'
         const responseData = await response.json();
-        context.commit('isLoaded', true); 
+        context.commit('setIsLoaded', true); 
 
         const idxLevel = memberLevelEnum.values.indexOf(responseData.level);
         const endDate = responseData.endDate? responseData.endDate.substring(0,10) : '';
@@ -83,15 +88,23 @@ export default {
     //------------------------------------------------------- 
 
     async delete(context, payload) {
-        context.commit('isUpdatedInBackEnd', false); 
-        const response = await fetch('https://localhost:7179/Member/' + payload, {
+        context.commit('isUpdatedInBackEnd', {
+            isUpdatedInBackEnd: false,
+            errorFromBackEnd: false,
+            errorText: null
+        }); 
+        const response = await fetch(urls.memberUrl + '/' + payload, {
             method: 'DELETE', // data is overriden OR added by Firebase
             headers: {
                 'Content-Type': 'application/json'
               },
             // body: JSON.stringify(member)
         });
-        context.commit('isUpdatedInBackEnd', true); 
+        context.commit('isUpdatedInBackEnd', {
+            isUpdatedInBackEnd: true,
+            errorFromBackEnd: false,
+            errorText: null
+        }); 
     },
 
     //------------------------------------------------------- 
@@ -102,7 +115,6 @@ export default {
             personId: 0,
             person: {
                 id: 0,
-                level: payload.level,
                 firstName: payload.person.firstName,
                 middleName: payload.person.middleName,
                 lastName: payload.person.lastName,
@@ -113,27 +125,44 @@ export default {
             isAlsoTrainer: payload.isAlsoTrainer
         };
 
-        context.commit('isUpdatedInBackEnd', false); 
-        const response = await fetch(`https://localhost:7179/Member`, {
+        context.commit('isUpdatedInBackEnd', {
+            isUpdatedInBackEnd: false,
+            errorFromBackEnd: false,
+            errorText: null
+        }); 
+        
+        const response = await fetch(urls.memberUrl, {
             method: 'POST', // data is overriden OR added by Firebase
             headers: {
                 'Content-Type': 'application/json'
               },
             body: JSON.stringify(member)
         });
-        context.commit('isUpdatedInBackEnd', true); 
+        
+        const resultMessage = await response.json();
+        let errorFromBackEnd = false;
+        let errorText = '';
+        if (!resultMessage.ok) {
+            context.commit('setGeneralErrorText', resultMessage.errorText);
+            errorFromBackEnd = true;
+            errorText = resultMessage.errorText;
+        } 
+        context.commit('isUpdatedInBackEnd', {
+            isUpdatedInBackEnd: true,
+            errorFromBackEnd,
+            errorText
+        }); 
     },
-
-    //------------------------------------------------------- 
 
 
     async update(context, payload) {
+        context.commit('setGeneralErrorText', '');
+
         const member = {
             id: payload.id,
             personId: payload.personId,
             person: {
                 id: payload.person.id,
-                level: payload.level,
                 firstName: payload.person.firstName,
                 middleName: payload.person.middleName,
                 lastName: payload.person.lastName,
@@ -144,15 +173,32 @@ export default {
             isAlsoTrainer: payload.isAlsoTrainer
         };
 
-        context.commit('isUpdatedInBackEnd', false); 
-        const response = await fetch(`https://localhost:7179/Member`, {
+        context.commit('isUpdatedInBackEnd', {
+            isUpdatedInBackEnd: false,
+            errorFromBackEnd: false,
+            errorText: null
+        }); 
+        const response = await fetch(urls.memberUrl, {
             method: 'PUT', // data is overriden OR added by Firebase
             headers: {
                 'Content-Type': 'application/json'
               },
             body: JSON.stringify(member)
         });
-        context.commit('isUpdatedInBackEnd', true); 
-    }
 
+        const resultMessage = await response.json();
+        let errorFromBackEnd = false;
+        let errorText = '';
+        if (!resultMessage.ok) {
+            context.commit('setGeneralErrorText', resultMessage.errorText);
+            errorFromBackEnd = true;
+            errorText = resultMessage.errorText;
+        } 
+        context.commit('isUpdatedInBackEnd', {
+            isUpdatedInBackEnd: true,
+            errorFromBackEnd,
+            errorText
+        }); 
+     
+    }
 };

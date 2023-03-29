@@ -2,4 +2,4 @@ Werkwijze Github:
 
 * Maak via Github client applicatie een Github-folder aan (eenmalig)
 * Kopieer je sources en folders naar deze Github-folder
-* Publiceer daarna op Github.
+* Publiceer daarna op Github (zoek ff naar de juiste knop).

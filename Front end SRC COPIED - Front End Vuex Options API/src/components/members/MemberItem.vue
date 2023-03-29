@@ -15,12 +15,12 @@
                 <td><h5>PersonId: {{personId}}</h5></td>
             </tr>
             <tr>
-                <td><h5>Volledige naam: {{fullName}}</h5></td>
+                <td><h5>Volledige naam: {{constructFullName(sortedOn)}}</h5></td>
                 <td><h5>Is ook trainer: {{convertBooleanToString(isAlsoTrainer)}}</h5></td>
             </tr>  
             <tr>
-                <td><h5>Level Id: {{level}}</h5></td>
-                <td><h5>Level: {{levelString}}</h5></td>
+                <td><h5>Niveau Id: {{level}}</h5></td>
+                <td><h5>Niveau: {{levelString}}</h5></td>
               
             </tr>
             <tr>
@@ -75,6 +75,10 @@ export default {
             type: String,
             required: true,
         },
+        sortedOn: {
+            type: String,
+            required: true,
+        },
         firstName: {
             type: String,
             required: true 
@@ -103,9 +107,6 @@ export default {
             },
             endDateInView() {
                 return this.endDate != '' ? this.simplifyDateFormat(this.formatDate('DDMMYYYY', this.endDate)) : ''
-            },
-            fullName() {
-                return this.firstName + ' ' + this.middleName + ' ' + this.lastName;
             },
             deleteWarningTitle() {
             const fullName = this.firstName + ' ' + this.middleName + ' ' + this.lastName;

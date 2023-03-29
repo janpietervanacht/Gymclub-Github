@@ -13,5 +13,11 @@ export default {
     },
     isUpdatedInBackEnd(state) {
         return state.isUpdatedInBackEnd;
-    }
+    },
+    generalErrorText(state) { 
+        return state.generalErrorText;
+    },
+    errorFromBackEnd(state) { 
+        return state.errorFromBackEnd;
+    },
 };

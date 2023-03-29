@@ -1,5 +1,12 @@
 export default {
     methods: {
+        constructFullName(sortedOn) {
+            if (sortedOn == 'lastName') {
+                return this.lastName + ', ' + this.firstName + ' ' + this.middleName;
+            } else {
+                return this.firstName + ' ' + this.middleName + ' ' + this.lastName;
+            }
+        },
         convertBooleanToString(val) {
              return val == true ? 'Ja' : 'Nee'
         },

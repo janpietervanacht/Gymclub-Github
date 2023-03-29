@@ -8,10 +8,16 @@ export default {
     setMember(state, payload) { 
         state.member = payload;
     },
-    isLoaded(state, payload) { 
+    setIsLoaded(state, payload) { 
         state.isLoaded = payload;
     },
+    // er is geen aparte mutation nodig voor errorFromBackEnd
     isUpdatedInBackEnd(state, payload) { 
-        state.isUpdatedInBackEnd = payload;
+        state.isUpdatedInBackEnd = payload.isUpdatedInBackEnd;
+        state.errorFromBackEnd = payload.errorFromBackEnd;
+        state.generalErrorText = payload.errorText;
+    },
+    setGeneralErrorText(state, payload) {
+        state.generalErrorText = payload;
     },
 };

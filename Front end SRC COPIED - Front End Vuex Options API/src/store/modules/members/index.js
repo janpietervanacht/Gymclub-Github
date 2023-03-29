@@ -14,7 +14,9 @@ export default {
             members: [],
             member: {},
             isLoaded: false,
-            isUpdatedInBackEnd: false
+            isUpdatedInBackEnd: false,
+            errorFromBackEnd: false,
+            generalErrorText: '',
         };
     },
     mutations,
