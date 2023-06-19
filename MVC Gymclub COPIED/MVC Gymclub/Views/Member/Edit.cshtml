@@ -1,0 +1,61 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model MVC_Gymclub.ViewModels.Member.MemberVM
+
+<h4>Wijzig Lid: @Model.FullName met id: @Model.Member.Id</h4>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(mbr => mbr.Member.Id)
+        @Html.HiddenFor(mbr => mbr.Member.PersonId)
+        @Html.HiddenFor(mbr => mbr.Member.Person.Id)
+    </div>
+
+    @Html.LabelFor(mbr => mbr.Member.Person.FirstName)
+    <div class="col-md-10">
+        @Html.TextBoxFor(mbr => mbr.Member.Person.FirstName, new { placeholder = "Vul voornaam in", @class = "form-control" })
+        @Html.ValidationMessageFor(mbr => mbr.Member.Person.FirstName, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(mbr => mbr.Member.Person.MiddleName)
+    <div class="col-md-10">
+        @Html.TextBoxFor(mbr => mbr.Member.Person.MiddleName, new { placeholder = "Vul tussenvoegsels in", @class = "form-control" })
+        @Html.ValidationMessageFor(mbr => mbr.Member.Person.MiddleName, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(mbr => mbr.Member.Person.LastName)
+    <div class="col-md-10">
+        @Html.TextBoxFor(mbr => mbr.Member.Person.LastName, new { placeholder = "Vul achternaam in", @class = "form-control" })
+        @Html.ValidationMessageFor(mbr => mbr.Member.Person.LastName, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(mbr => mbr.Member.StartDate)
+    <div class="col-md-10">
+        @Html.EditorFor(mbr => mbr.Member.StartDate)
+    </div>
+
+    @Html.LabelFor(mbr => mbr.Member.EndDate)
+    <div class="col-md-10">
+        @Html.EditorFor(mbr => mbr.Member.EndDate)
+    </div>
+
+     @Html.LabelFor(mbr => mbr.Member.IsAlsoTrainer)
+    <div class="col-md-10">
+        @Html.CheckBoxFor(mbr => mbr.Member.IsAlsoTrainer)
+    </div>
+
+ <br />
+    <div>
+        <input type="submit" value="Wijzig turn-lid" />
+    </div>
+}
+

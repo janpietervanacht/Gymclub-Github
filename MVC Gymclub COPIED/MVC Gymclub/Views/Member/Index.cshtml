@@ -1,0 +1,71 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model MVC_Gymclub.ViewModels.Member.MemberListVM
+
+
+<h1>
+    Dit is de leden lijst
+</h1>
+
+
+<table>
+
+    <tr>
+        <th>
+            @Html.DisplayName("Voornaam")
+        </th>
+        <th>
+            @Html.DisplayName("tussenv")
+        </th>
+        <th>
+            @Html.DisplayName("Achternaam")
+        </th>
+          <th>
+            @Html.DisplayName("----")
+        </th>
+        <th>
+            @Html.DisplayName("Volledige naam")
+        </th>
+    </tr>
+
+    @foreach (var mbr in @Model.Members) 
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(i => mbr.Member.Person.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(i => mbr.Member.Person.MiddleName)
+            </td>
+            <td>
+                @Html.DisplayFor(i => mbr.Member.Person.LastName)
+            </td>
+            <td>
+            </td>
+            <td>
+                @Html.DisplayFor(i => mbr.FullName)
+            </td>
+            <td>
+                 <button style="font-style: italic; color: purple">
+                        @Html.ActionLink($"Verwijder lid", "Delete",
+                        new { id = mbr.Member.Id })
+                 </button>
+            </td>
+             <td>
+                 <button style="font-style: italic; color: red">
+                        @Html.ActionLink($"Wijzig lid", "Edit",
+                        new { id = mbr.Member.Id })
+                 </button>
+            </td>
+
+        </tr>
+    }
+</table>
+
+
+    <hr/>
+    <button style="color: purple">
+                        @Html.ActionLink($"Herstel alle leden", "Recover")
+    </button>
