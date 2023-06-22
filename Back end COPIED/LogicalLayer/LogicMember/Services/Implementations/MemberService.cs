@@ -128,7 +128,7 @@ namespace LogicMember.Services.Implementations
             if (member.Person.FirstName.ToLower().Contains("saddam"))
             {
                 result.Ok = false;
-                result.ErrorText = "Back end says: De naam \'Hugo\' is niet toegestaan";
+                result.ErrorText = "Back end says: De naam \'Saddam\' is niet toegestaan";
                 return result;
             }
 
